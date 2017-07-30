@@ -1,2 +1,2 @@
-from .dot import BlueDot, BlueDotPosition, BlueDotInteraction, BlueDotSwipe
-from .mock import MockBlueDot
+from .dpad import BluePad, BluePadPosition, BlueBttnPosition, BluePadInteraction
+#from .mock import MockBlueDot

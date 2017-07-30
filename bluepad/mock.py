@@ -1,5 +1,5 @@
 from .btcomm import BluetoothServer
-from .dot import BlueDot
+from .dpad import BluePad
 from .threads import WrapThread
 
 class MockBluetoothAdapter():
