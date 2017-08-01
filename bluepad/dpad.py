@@ -856,27 +856,45 @@ class BluePad():
         last_command = self._data_buffer.rfind("\n")
         if last_command != -1:
             commands = self._data_buffer[:last_command].split("\n")
-            self._process_commands(commands)
+            self._process_padcommands(commands)
+            self._process_bttncommands(commands)
             #remove the processed commands from the buffer
             self._data_buffer = self._data_buffer[last_command + 1:]
 
-    def _process_commands(self, commands):
+    def _process_padcommands(self, commands):
         for command in commands:
             operation, x, y = command.split(",")
-            self._position = BluePadPosition(x, y)
-            #self._position = BlueBttnPosition(x, y)
-        
-            #dot released
+            self._padposition = BluePadPosition(x, y)           
+       
+            #dpad released
             if operation == "0":
                 self._released()
     
-            #dot pressed
+            #dpad pressed
             elif operation == "1":
                 self._pressed()
 
-            #dot pressed position moved
+            #dpad pressed position moved
             elif operation == "2":
                 self._moved()
+
+    def _process_bttncommands(self, commands):
+        for command in commands:
+            operation, x, y = command.split(",")
+            self._bttnposition = BlueBttnPosition(x, y)
+                   
+            #button released
+            if operation == "3":
+                self._released()
+    
+            #button pressed
+            elif operation == "4":
+                self._pressed()
+
+            #button pressed position moved
+            elif operation == "5":
+                self._moved()
+                
 
     def _pressed(self):
         self._is_pressed_event.set()
@@ -886,8 +904,8 @@ class BluePad():
         self._double_pressed()
 
         #create new interaction
-        self._interaction = BluePadInteraction(self._position)
-        self._interaction = BlueBttnInteraction(self._position)
+        self._padinteraction = BluePadInteraction(self._padposition)
+        self._bttninteraction = BlueBttnInteraction(self._bttnposition)
 
         self._process_callback(self.when_pressed)
 
@@ -909,7 +927,8 @@ class BluePad():
         self._is_released_event.set()
         self._is_moved_event.clear()
 
-        self._interaction.released(self._position)
+        self._padinteraction.released(self._padposition)
+        self._bttninteraction.released(self._bttnposition)
 
         self._process_callback(self.when_released)
 
@@ -918,7 +937,8 @@ class BluePad():
     def _moved(self):
         self._is_moved_event.set()
 
-        self._interaction.moved(self._position)
+        self._padinteraction.moved(self._padposition)
+        self._bttninteraction.moved(self._bttnposition)
 
         self._process_callback(self.when_moved)
     
